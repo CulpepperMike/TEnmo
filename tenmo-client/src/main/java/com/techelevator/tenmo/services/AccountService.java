@@ -7,7 +7,7 @@ import com.techelevator.tenmo.model.Balance;
 import java.math.BigDecimal;
 
 public interface AccountService {
-    Balance getBalance(AuthenticatedUser authenticatedUser);
+    BigDecimal getBalance();
     Account getAccountByUserId(int userId);
     Account getAccountById(int id);
 
