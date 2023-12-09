@@ -5,5 +5,5 @@ import com.techelevator.tenmo.model.TransferStatus;
 public interface TransferStatusService {
     TransferStatus getTransferStatusById(int id);
     TransferStatus getTransferStatus(String description);
-    TransferStatus isTransferApproved(boolean isApproved);
+    TransferStatus isApproved(boolean isApproved);
 }
