@@ -1,12 +1,11 @@
 package com.techelevator.tenmo.services;
 
 import com.techelevator.tenmo.model.*;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class TransferServiceREST implements TransferService{
@@ -17,24 +16,11 @@ public class TransferServiceREST implements TransferService{
 
     private TransferService transferService;
 
-
     private AuthenticatedUser currentUser;
 
     private UserService userService;
 
-    private AccountService accountService;
-
     private TransferStatusService transferStatus;
-
-
-    public AccountService getAccountService() {
-        return accountService;
-    }
-
-    public void setAccountService(AccountService accountService) {
-        this.accountService = accountService;
-    }
-
 
     public UserService getUserService() {
         return userService;
@@ -71,6 +57,8 @@ public class TransferServiceREST implements TransferService{
 
     private final RestTemplate restTemplate = new RestTemplate();
 
+    private static final DecimalFormat df = new DecimalFormat("0.00");
+
     @Override
     public List<Transfer> getAllTransfers(Transfer transfer) {
 
@@ -87,30 +75,26 @@ public class TransferServiceREST implements TransferService{
         return null;
     }
 
+
     @Override
-    public Transfer sendTransfer(int id, BigDecimal amount) {
-
+    public Transfer createTransfer(int id, BigDecimal amount) {
         Transfer newTransfer = new Transfer();
+        int myId = currentUser.getUser().getId();
+        Balance balance = new Balance();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Transfer> transferHttpEntity = new HttpEntity<>(newTransfer, headers);
+        AccountServiceREST account = new AccountServiceREST(baseUrl, currentUser);
 
-        newTransfer.setAccountFrom(currentUser.getUser().getId());
+        // sets new transfer details
+        newTransfer.setAccountFrom(myId);
         newTransfer.setAccountTo(id);
         newTransfer.setAmount(amount);
         newTransfer.setDescription("Approved");
 
-        BigDecimal myBalance = accountService.getAccountByUserId(currentUser.getUser().getId()).getBalance().getBalance();
+        restTemplate.exchange(baseUrl + "/transfers/" + newTransfer.getId(), HttpMethod.POST, transferHttpEntity, Transfer.class).getBody();
 
-        BigDecimal updatedBalance = myBalance.subtract(amount);
-        accountService.getAccountById(currentUser.getUser().getId()).getBalance().setBalance(updatedBalance);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HttpEntity<Transfer> transferHttpEntity = new HttpEntity<>(newTransfer, headers);
-
-
-            restTemplate.postForEntity(baseUrl + "transfers", transferHttpEntity, Transfer.class);
-
-        System.out.println("Your new balance is: " + accountService.getAccountById(currentUser.getUser().getId()).getBalance().getBalance() + "!");
+        System.out.println("Your new balance is: $" + df.format(balance) + "!");
         return newTransfer;
     }
 

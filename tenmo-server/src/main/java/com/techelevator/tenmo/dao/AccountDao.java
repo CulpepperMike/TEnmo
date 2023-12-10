@@ -12,6 +12,5 @@ public interface AccountDao {
     Account getAccountByAccountId(int accountId);
     Account getAccountByUserId(int userId);
     List<Account> findAllAccounts();
-    Account depositAccount(Account account, int id, BigDecimal amount);
-    Account withdrawAccount(Account account, int accountId, BigDecimal amount);
+    void updateBalance(int id, Balance amount);
 }

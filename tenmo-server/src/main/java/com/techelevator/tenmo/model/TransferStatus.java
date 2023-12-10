@@ -3,6 +3,10 @@ package com.techelevator.tenmo.model;
 public class TransferStatus {
     private int id;
     private String description;
+    private boolean isApproved;
+
+    public TransferStatus(int transferStatusID, String transferStatusDesc) {
+    }
 
     public int getId() {
         return id;
@@ -19,4 +23,5 @@ public class TransferStatus {
     public void setDescription(String description) {
         this.description = description;
     }
+
 }

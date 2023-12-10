@@ -1,8 +1,12 @@
 package com.techelevator.tenmo.model;
 
-public class TransferStatus {
+public class TransferType {
     private int id;
     private String description;
+
+    public TransferType(int id, String description) {
+
+    }
 
     public int getId() {
         return id;
