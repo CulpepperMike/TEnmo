@@ -63,9 +63,7 @@ public class App {
     private void handleLogin() {
         UserCredentials credentials = consoleService.promptForCredentials();
         currentUser = authenticationService.login(credentials);
-        if (currentUser != null) {
-            this.accountService = new AccountServiceREST(API_BASE_URL, currentUser);
-        }   else {
+        if (currentUser == null) {
             consoleService.printErrorMessage();
         }
     }
