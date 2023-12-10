@@ -28,7 +28,7 @@ public class JdbcTransferDao implements TransferDao{
     @Override
     public List<Transfer> getTransfersByUserId(int userId) {
         String sql = "SELECT transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount FROM transfer " +
-                "JOIN accounts ON accounts.account_id = transfers.account_from OR accounts.account_id = transfers.account_to " +
+                "JOIN account ON account.account_id = transfers.account_from OR account.account_id = transfers.account_to " +
                 "WHERE user_id = ?";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
         List<Transfer> transfers = new ArrayList<>();
@@ -72,7 +72,7 @@ public class JdbcTransferDao implements TransferDao{
     @Override
     public List<Transfer> getPendingTransfers(int userId) {
         String sql = "SELECT transfer_id, transfer_type_id, transfer.transfer_status_id, account_from, account_to, amount FROM transfer " +
-                "JOIN accounts ON accounts.account_id = transfer.account_from " +
+                "JOIN account ON account.account_id = transfer.account_from " +
                 "JOIN transfer_statuses ON transfer.transfer_status_id = transfer_statuses.transfer_status_id " +
                 "WHERE user_id = ? AND transfer_status_desc = 'Pending'";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
