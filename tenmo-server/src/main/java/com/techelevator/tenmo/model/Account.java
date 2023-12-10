@@ -5,6 +5,12 @@ public class Account {
     private int userId;
     private Balance balance;
 
+    public Account(int id, int userId, Balance balance) {
+        this.id = id;
+        this.userId = userId;
+        this.balance = balance;
+    }
+
     public int getId() {
         return id;
     }

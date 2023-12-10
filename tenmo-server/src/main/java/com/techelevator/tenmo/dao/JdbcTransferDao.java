@@ -5,10 +5,12 @@ import com.techelevator.tenmo.model.Transfer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+@Component
 
 public class JdbcTransferDao implements TransferDao{
     private final JdbcTemplate jdbcTemplate;
@@ -19,13 +21,13 @@ public class JdbcTransferDao implements TransferDao{
     }
     @Override
     public void createTransfer(Transfer transfer) {
-        String sql = "INSERT INTO transfers (transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO transfer (transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES (?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql, transfer.getId(), transfer.getTransferTypeId(), transfer.getTransferStatusId(), transfer.getAccountFrom(), transfer.getAccountTo(), transfer.getAmount());
     }
 
     @Override
     public List<Transfer> getTransfersByUserId(int userId) {
-        String sql = "SELECT transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount FROM transfers " +
+        String sql = "SELECT transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount FROM transfer " +
                 "JOIN accounts ON accounts.account_id = transfers.account_from OR accounts.account_id = transfers.account_to " +
                 "WHERE user_id = ?";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
@@ -41,7 +43,7 @@ public class JdbcTransferDao implements TransferDao{
     @Override
     public Transfer getTransferByTransferId(int id) {
         String sql = "SELECT transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount " +
-                "FROM transfers WHERE transfer_id = ?";
+                "FROM transfer WHERE transfer_id = ?";
         SqlRowSet result = jdbcTemplate.queryForRowSet(sql, id);
         Transfer transfer = null;
 
@@ -55,7 +57,7 @@ public class JdbcTransferDao implements TransferDao{
     @Override
     public List<Transfer> getAllTransfers() {
         String sql = "SELECT transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount " +
-                "FROM transfers";
+                "FROM transfer";
 
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
         List<Transfer> transfers = new ArrayList<>();
@@ -69,9 +71,9 @@ public class JdbcTransferDao implements TransferDao{
 
     @Override
     public List<Transfer> getPendingTransfers(int userId) {
-        String sql = "SELECT transfer_id, transfer_type_id, transfers.transfer_status_id, account_from, account_to, amount FROM transfers " +
-                "JOIN accounts ON accounts.account_id = transfers.account_from " +
-                "JOIN transfer_statuses ON transfers.transfer_status_id = transfer_statuses.transfer_status_id " +
+        String sql = "SELECT transfer_id, transfer_type_id, transfer.transfer_status_id, account_from, account_to, amount FROM transfer " +
+                "JOIN accounts ON accounts.account_id = transfer.account_from " +
+                "JOIN transfer_statuses ON transfer.transfer_status_id = transfer_statuses.transfer_status_id " +
                 "WHERE user_id = ? AND transfer_status_desc = 'Pending'";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
         List<Transfer> pendingTransfers = new ArrayList<>();
@@ -84,7 +86,7 @@ public class JdbcTransferDao implements TransferDao{
 
     @Override
     public void updateTransfer(Transfer transfer) {
-        String sql = "UPDATE transfers SET transfer_status_id = ? WHERE transfer_id = ?";
+        String sql = "UPDATE transfer SET transfer_status_id = ? WHERE transfer_id = ?";
 
         jdbcTemplate.update(sql, transfer.getTransferStatusId(), transfer.getId());
     }

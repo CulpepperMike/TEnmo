@@ -7,11 +7,11 @@ import com.techelevator.tenmo.model.Balance;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.math.BigDecimal;
 
 @RestController
@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 public class AccountController {
     @Autowired
     private AccountDao accountDao;
+    @Autowired
     private TransferDao transferDao;
 
 
@@ -29,11 +30,12 @@ public class AccountController {
     }
 
     @PreAuthorize("permitAll")
-    @RequestMapping(path = "/transfers/{id}", method = RequestMethod.GET)
-    public void newTransfer(Transfer transfer) {
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(path = "/transfers/{id}", method = RequestMethod.POST)
+    public void createTransfer(@Valid @RequestBody Transfer transfer) {
         // gets accounts for Transfer from ids
-        Account account = accountDao.getAccountByAccountId(transfer.getAccountFrom());
-        Account accountTo = accountDao.getAccountByAccountId(transfer.getAccountTo());
+        Account account = accountDao.getAccountByUserId(transfer.getAccountFrom());
+        Account accountTo = accountDao.getAccountByUserId(transfer.getAccountTo());
         // amount of money being transferred
         BigDecimal amount = transfer.getAmount();
         // does transfer
@@ -43,5 +45,20 @@ public class AccountController {
         // updates account Balances
         accountDao.updateBalance(account.getId(), account.getBalance());
         accountDao.updateBalance(accountTo.getId(), accountTo.getBalance());
+    }
+
+    @RequestMapping(path="/account/user/{id}", method = RequestMethod.GET)
+    public Account getAccountByUserId(@PathVariable int id) {
+        return accountDao.getAccountByUserId(id);
+    }
+
+    @RequestMapping(path="/account/{id}", method = RequestMethod.GET)
+    public Account getAccountByAccountId(@PathVariable int id) {
+        return accountDao.getAccountByAccountId(id);
+    }
+
+    @RequestMapping(path="/transfers/{id}", method = RequestMethod.GET)
+    public Transfer getTransfersByUserId(@PathVariable int id) {
+        return transferDao.getTransferByTransferId(id);
     }
 }

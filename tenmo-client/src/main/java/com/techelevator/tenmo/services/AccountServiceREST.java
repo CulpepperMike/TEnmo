@@ -20,13 +20,14 @@ public class AccountServiceREST implements AccountService {
             this.currentUser = currentUser;
     }
 
+
     @Override
     public BigDecimal getBalance() {
         HttpEntity entity = createEntity();
         Balance balance = null;
         try {
             balance =
-                    restTemplate.exchange(baseUrl + "balance/" + currentUser.getUser().getId(), HttpMethod.GET, entity, Balance.class).getBody();
+                    restTemplate.exchange(baseUrl + "balance/" + currentUser.getUser(), HttpMethod.GET, entity, Balance.class).getBody();
             //balance = response.getBody();
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
@@ -42,11 +43,17 @@ public class AccountServiceREST implements AccountService {
 
     @Override
     public Account getAccountByUserId(int userId) {
-        return null;
+        HttpEntity entity = createEntity();
+            return restTemplate.exchange(baseUrl + "account/user/" + userId,
+                    HttpMethod.GET,
+                    entity,
+                    Account.class).getBody();
     }
 
     @Override
     public Account getAccountById(int id) {
-        return null;
+        HttpEntity entity = createEntity();
+        return restTemplate.exchange(baseUrl + "account/" + id, HttpMethod.GET, entity,
+                Account.class).getBody();
     }
 }

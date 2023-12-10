@@ -9,7 +9,6 @@ public class Transfer {
     private int accountFrom;
     private int accountTo;
     private BigDecimal amount;
-    private String description;
 
     public int getId() {
         return id;
@@ -17,14 +16,6 @@ public class Transfer {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public int getTransferTypeId() {

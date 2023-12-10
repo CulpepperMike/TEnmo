@@ -10,12 +10,20 @@ public class App {
 
     private static final String API_BASE_URL = "http://localhost:8080/";
 
-    private final ConsoleService consoleService = new ConsoleService();
-    private final AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
+    private ConsoleService consoleService = new ConsoleService();
+    private AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
     private AuthenticatedUser currentUser;
+    private AccountService accountService;
+    public App(ConsoleService consoleService, AuthenticationService authenticationService) {
+        this.consoleService = consoleService;
+        this.authenticationService = authenticationService;
+    }
+
+
+    //notes for testing - user : user pass : pass, other user id : 1002
 
     public static void main(String[] args) {
-        App app = new App();
+        App app = new App(new ConsoleService(), new AuthenticationService(API_BASE_URL));
         app.run();
     }
 
@@ -55,7 +63,9 @@ public class App {
     private void handleLogin() {
         UserCredentials credentials = consoleService.promptForCredentials();
         currentUser = authenticationService.login(credentials);
-        if (currentUser == null) {
+        if (currentUser != null) {
+            this.accountService = new AccountServiceREST(API_BASE_URL, currentUser);
+        }   else {
             consoleService.printErrorMessage();
         }
     }
@@ -103,18 +113,21 @@ public class App {
 
 	private void sendBucks() {
 		// TODO Auto-generated method stub
+        AccountServiceREST account = new AccountServiceREST(API_BASE_URL, currentUser);
         Scanner scanner = new Scanner(System.in);
         TransferServiceREST send = new TransferServiceREST(API_BASE_URL, currentUser);
         System.out.println("Enter ID of User you want to send Bucks to : ");
-        int transferId = scanner.nextInt();
+        int userTo = scanner.nextInt();
         System.out.println("Enter amount you want to send : ");
         BigDecimal bucks = scanner.nextBigDecimal();
-        send.sendTransfer(transferId, bucks);
+        int accountId = account.getAccountByUserId(currentUser.getUser().getId()).getId();
+        int userToAccountId = account.getAccountByUserId(userTo).getId();
+        send.createTransfer(accountId, userToAccountId, 2, bucks);
 	}
 
 	private void requestBucks() {
 		// TODO Auto-generated method stub
-		
+		//note - type id for requestbucks is 1
 	}
 
 }

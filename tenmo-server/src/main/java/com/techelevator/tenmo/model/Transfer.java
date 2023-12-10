@@ -1,15 +1,22 @@
 package com.techelevator.tenmo.model;
 
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 public class Transfer {
+    @NotNull(message = "id should not be blank")
     private int id;
+    @NotNull(message = "transferTypeId should not be blank")
     private int transferTypeId;
+    @NotNull(message = "transferStatusId should not be blank")
     private int transferStatusId;
+    @NotNull(message = "accountFrom should not be blank")
     private int accountFrom;
+    @NotNull(message = "amountTo should not be blank")
     private int accountTo;
+    @NotNull(message = "amount should not be blank")
     private BigDecimal amount;
-    private String description;
+
 
     public int getId() {
         return id;
@@ -17,15 +24,6 @@ public class Transfer {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public int getTransferTypeId() {

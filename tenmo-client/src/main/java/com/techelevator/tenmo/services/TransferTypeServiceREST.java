@@ -1,13 +1,12 @@
 package com.techelevator.tenmo.services;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
-import com.techelevator.tenmo.model.TransferType;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
-public class TransferTypeServiceREST implements TransferTypeService{
+public class TransferTypeServiceREST implements TransferTypeService {
 
     private String baseUrl;
     private RestTemplate restTemplate = new RestTemplate();
@@ -19,9 +18,9 @@ public class TransferTypeServiceREST implements TransferTypeService{
     }
 
     @Override
-    public TransferType getTransferTypeById(int id) {
+    public com.techelevator.tenmo.model.TransferType getTransferTypeById(int id) {
         HttpEntity entity = createEntity();
-        return restTemplate.exchange(baseUrl + "transfertype/" + id, HttpMethod.GET, entity, TransferType.class).getBody();
+        return restTemplate.exchange(baseUrl + "transfertype/" + id, HttpMethod.GET, entity, com.techelevator.tenmo.model.TransferType.class).getBody();
     }
 
     private HttpEntity<Void> createEntity() {
@@ -31,10 +30,10 @@ public class TransferTypeServiceREST implements TransferTypeService{
     }
 
     @Override
-    public TransferType getTransferTypeFromDesc(String description) {
+    public com.techelevator.tenmo.model.TransferType getTransferTypeFromDesc(String description) {
         HttpEntity entity = createEntity();
-        TransferType transferType = restTemplate.exchange(baseUrl + "transfertype/", HttpMethod.GET,
-                entity, TransferType.class).getBody();
+        com.techelevator.tenmo.model.TransferType transferType = restTemplate.exchange(baseUrl + "transfertype/", HttpMethod.GET,
+                entity, com.techelevator.tenmo.model.TransferType.class).getBody();
         return null;
     }
 }

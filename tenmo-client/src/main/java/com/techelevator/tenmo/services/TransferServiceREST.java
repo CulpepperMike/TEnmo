@@ -16,6 +16,17 @@ public class TransferServiceREST implements TransferService{
 
     private TransferService transferService;
 
+    public TransferTypeService getTransferType() {
+        return transferType;
+    }
+
+    public void setTransferType(TransferTypeService transferType) {
+        this.transferType = transferType;
+    }
+
+    private TransferTypeService transferType;
+
+
     private AuthenticatedUser currentUser;
 
     private UserService userService;
@@ -55,6 +66,7 @@ public class TransferServiceREST implements TransferService{
         this.transferService = transferService;
     }
 
+
     private final RestTemplate restTemplate = new RestTemplate();
 
     private static final DecimalFormat df = new DecimalFormat("0.00");
@@ -77,25 +89,33 @@ public class TransferServiceREST implements TransferService{
 
 
     @Override
-    public Transfer createTransfer(int id, BigDecimal amount) {
+    public Transfer createTransfer(int id, int accountTo, int typeId, BigDecimal amount) {
         Transfer newTransfer = new Transfer();
-        int myId = currentUser.getUser().getId();
         Balance balance = new Balance();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Transfer> transferHttpEntity = new HttpEntity<>(newTransfer, headers);
+
         AccountServiceREST account = new AccountServiceREST(baseUrl, currentUser);
 
+
         // sets new transfer details
-        newTransfer.setAccountFrom(myId);
-        newTransfer.setAccountTo(id);
+        newTransfer.setId(1);
+        newTransfer.setAccountFrom(id);
+        newTransfer.setAccountTo(accountTo);
+        newTransfer.setTransferTypeId(typeId);
         newTransfer.setAmount(amount);
-        newTransfer.setDescription("Approved");
+        newTransfer.setTransferStatusId(2);
 
-        restTemplate.exchange(baseUrl + "/transfers/" + newTransfer.getId(), HttpMethod.POST, transferHttpEntity, Transfer.class).getBody();
+        // gets current balance
+        BigDecimal currentBalance = account.getBalance();
 
-        System.out.println("Your new balance is: $" + df.format(balance) + "!");
-        return newTransfer;
+        //updates balance
+        BigDecimal updatedBalance = currentBalance.subtract(amount);
+        balance.setBalance(updatedBalance);
+
+        System.out.println("Your new balance is: $" + updatedBalance.toString() + "!");
+        HttpEntity<Transfer> transferHttpEntity = new HttpEntity<>(newTransfer, headers);
+        return restTemplate.exchange(baseUrl + "/transfers/" + newTransfer.getId(), HttpMethod.POST, transferHttpEntity, Transfer.class).getBody();
     }
 
 
