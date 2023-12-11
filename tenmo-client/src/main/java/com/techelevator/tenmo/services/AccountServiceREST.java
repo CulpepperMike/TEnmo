@@ -27,7 +27,7 @@ public class AccountServiceREST implements AccountService {
         Balance balance = null;
         try {
             balance =
-                    restTemplate.exchange(baseUrl + "balance/" + currentUser.getUser(), HttpMethod.GET, entity, Balance.class).getBody();
+                    restTemplate.exchange(baseUrl + "balance/" + currentUser.getUser().getId(), HttpMethod.GET, entity, Balance.class).getBody();
             //balance = response.getBody();
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());

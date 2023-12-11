@@ -46,7 +46,7 @@ public class AccountController {
         accountDao.updateBalance(account.getId(), account.getBalance());
         accountDao.updateBalance(accountTo.getId(), accountTo.getBalance());
     }
-
+    @PreAuthorize("permitAll")
     @RequestMapping(path="/account/user/{id}", method = RequestMethod.GET)
     public Account getAccountByUserId(@PathVariable int id) {
         return accountDao.getAccountByUserId(id);
@@ -57,6 +57,7 @@ public class AccountController {
         return accountDao.getAccountByAccountId(id);
     }
 
+    @PreAuthorize("permitAll")
     @RequestMapping(path="/transfers/{id}", method = RequestMethod.GET)
     public Transfer getTransfersByUserId(@PathVariable int id) {
         return transferDao.getTransferByTransferId(id);
