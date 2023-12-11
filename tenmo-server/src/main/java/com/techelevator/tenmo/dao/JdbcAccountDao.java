@@ -86,8 +86,8 @@ public class JdbcAccountDao implements AccountDao{
         String sql = "UPDATE account " +
                 "SET balance = ? " +
                 "WHERE account_id = ?";
-
-        jdbcTemplate.update(sql, amount, id);
+        BigDecimal balance = amount.getBalance();
+        jdbcTemplate.update(sql, balance, id);
     }
 
     private Account mapResultsToAccount(SqlRowSet result) {

@@ -34,8 +34,8 @@ public class AccountController {
     @RequestMapping(path = "/transfers/{id}", method = RequestMethod.POST)
     public void createTransfer(@Valid @RequestBody Transfer transfer) {
         // gets accounts for Transfer from ids
-        Account account = accountDao.getAccountByUserId(transfer.getAccountFrom());
-        Account accountTo = accountDao.getAccountByUserId(transfer.getAccountTo());
+        Account account = accountDao.getAccountByAccountId(transfer.getAccountFrom());
+        Account accountTo = accountDao.getAccountByAccountId(transfer.getAccountTo());
         // amount of money being transferred
         BigDecimal amount = transfer.getAmount();
         // does transfer
