@@ -118,9 +118,15 @@ public class App {
         int userTo = scanner.nextInt();
         System.out.println("Enter amount you want to send : ");
         BigDecimal bucks = scanner.nextBigDecimal();
-        int accountId = account.getAccountByUserId(currentUser.getUser().getId()).getId();
-        int userToAccountId = account.getAccountByUserId(userTo).getId();
-        send.createTransfer(accountId, userToAccountId, 2, bucks);
+        if (account.getBalance().compareTo(bucks) < 0) {
+            System.out.println("Insufficient funds.");
+        } else if (bucks.compareTo(BigDecimal.valueOf(0)) <= 0) {
+            System.out.println("Transfer amount must be above 0.");
+        } else {
+            int accountId = account.getAccountByUserId(currentUser.getUser().getId()).getId();
+            int userToAccountId = account.getAccountByUserId(userTo).getId();
+            send.createTransfer(accountId, userToAccountId, 2, bucks);
+        }
 	}
 
 	private void requestBucks() {
