@@ -4,6 +4,7 @@ import com.techelevator.tenmo.model.*;
 import com.techelevator.tenmo.services.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Scanner;
 
 public class App {
@@ -14,7 +15,8 @@ public class App {
     private AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
     private AuthenticatedUser currentUser;
     private AccountService accountService;
-    private int transferId;
+    private TransferService transferService;
+    private static int transferId;
     public App(ConsoleService consoleService, AuthenticationService authenticationService) {
         this.consoleService = consoleService;
         this.authenticationService = authenticationService;
@@ -137,7 +139,15 @@ public class App {
 	}
 
     private int transferIdMaker(){
-        transferId++;
+        TransferServiceREST transferServ = new TransferServiceREST(API_BASE_URL, currentUser);
+        Transfer[] transfers = transferServ.getAllTransfers();
+        int highestId = 0;
+        for (Transfer transfer : transfers){
+            if (transfer.getId() > highestId) {
+                highestId = transfer.getId();
+            }
+        }
+        transferId = highestId + 1;
         return transferId;
     }
 

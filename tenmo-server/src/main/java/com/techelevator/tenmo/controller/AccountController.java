@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @PreAuthorize("isAuthenticated")
@@ -61,5 +63,11 @@ public class AccountController {
     @RequestMapping(path="/transfers/{id}", method = RequestMethod.GET)
     public Transfer getTransfersByUserId(@PathVariable int id) {
         return transferDao.getTransferByTransferId(id);
+    }
+
+    @PreAuthorize("permitAll")
+    @RequestMapping(path="/transfers", method = RequestMethod.GET)
+    public List<Transfer> getAllTransfers() {
+        return transferDao.getAllTransfers();
     }
 }

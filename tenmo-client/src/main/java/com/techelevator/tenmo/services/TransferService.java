@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface TransferService {
-    List<Transfer>getAllTransfers(Transfer transfer);
+    Transfer[] getAllTransfers();
     List<Transfer>getTransfersByUserId(int userId);
 
     Transfer getTransferFromId(int id);

@@ -6,6 +6,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TransferServiceREST implements TransferService{
@@ -72,9 +73,10 @@ public class TransferServiceREST implements TransferService{
     private static final DecimalFormat df = new DecimalFormat("0.00");
 
     @Override
-    public List<Transfer> getAllTransfers(Transfer transfer) {
-
-        return null;
+    public Transfer[] getAllTransfers() {
+        HttpEntity entity = createEntity();
+        return restTemplate.exchange(baseUrl + "transfers", HttpMethod.GET, entity,
+                Transfer[].class).getBody();
     }
 
     @Override
@@ -87,6 +89,11 @@ public class TransferServiceREST implements TransferService{
         return null;
     }
 
+    private HttpEntity<Void> createEntity() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(currentUser.getToken());
+        return new HttpEntity<>(headers);
+    }
 
     @Override
     public Transfer createTransfer(int transferId, int id, int accountTo, int typeId, BigDecimal amount) {
