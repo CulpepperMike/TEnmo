@@ -88,7 +88,10 @@ public class TransferServiceREST implements TransferService{
 
     @Override
     public Transfer getTransferFromId(int id) {
-        return null;
+
+        HttpEntity entity = createEntity();
+        return restTemplate.exchange(baseUrl + "transfers/" + id, HttpMethod.GET, entity,
+                Transfer.class).getBody();
     }
 
     private HttpEntity<Void> createEntity() {
