@@ -89,7 +89,7 @@ public class TransferServiceREST implements TransferService{
 
 
     @Override
-    public Transfer createTransfer(int id, int accountTo, int typeId, BigDecimal amount) {
+    public Transfer createTransfer(int transferId, int id, int accountTo, int typeId, BigDecimal amount) {
         Transfer newTransfer = new Transfer();
         Balance balance = new Balance();
         HttpHeaders headers = new HttpHeaders();
@@ -99,7 +99,7 @@ public class TransferServiceREST implements TransferService{
 
 
         // sets new transfer details
-        newTransfer.setId(1);
+        newTransfer.setId(transferId);
         newTransfer.setAccountFrom(id);
         newTransfer.setAccountTo(accountTo);
         newTransfer.setTransferTypeId(typeId);

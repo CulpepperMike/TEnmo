@@ -11,7 +11,7 @@ public interface TransferService {
 
     Transfer getTransferFromId(int id);
 
-    Transfer createTransfer(int id, int accountTo, int typeId, BigDecimal amount);
+    Transfer createTransfer(int transferId, int id, int accountTo, int typeId, BigDecimal amount);
 
 
     //TransferStatus getTransferStatusById(int id);

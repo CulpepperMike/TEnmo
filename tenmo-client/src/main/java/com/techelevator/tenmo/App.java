@@ -14,6 +14,7 @@ public class App {
     private AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
     private AuthenticatedUser currentUser;
     private AccountService accountService;
+    private int transferId;
     public App(ConsoleService consoleService, AuthenticationService authenticationService) {
         this.consoleService = consoleService;
         this.authenticationService = authenticationService;
@@ -123,9 +124,10 @@ public class App {
         } else if (bucks.compareTo(BigDecimal.valueOf(0)) <= 0) {
             System.out.println("Transfer amount must be above 0.");
         } else {
+            transferIdMaker();
             int accountId = account.getAccountByUserId(currentUser.getUser().getId()).getId();
             int userToAccountId = account.getAccountByUserId(userTo).getId();
-            send.createTransfer(accountId, userToAccountId, 2, bucks);
+            send.createTransfer(transferId, accountId, userToAccountId, 2, bucks);
         }
 	}
 
@@ -133,5 +135,10 @@ public class App {
 		// TODO Auto-generated method stub
 		//note - type id for requestbucks is 1
 	}
+
+    private int transferIdMaker(){
+        transferId++;
+        return transferId;
+    }
 
 }
