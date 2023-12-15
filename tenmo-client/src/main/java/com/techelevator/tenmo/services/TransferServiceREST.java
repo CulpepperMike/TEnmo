@@ -6,6 +6,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TransferServiceREST implements TransferService{
@@ -72,14 +73,17 @@ public class TransferServiceREST implements TransferService{
     private static final DecimalFormat df = new DecimalFormat("0.00");
 
     @Override
-    public List<Transfer> getAllTransfers(Transfer transfer) {
-
-        return null;
+    public Transfer[] getAllTransfers() {
+        HttpEntity entity = createEntity();
+        return restTemplate.exchange(baseUrl + "transfers", HttpMethod.GET, entity,
+                Transfer[].class).getBody();
     }
 
     @Override
-    public List<Transfer>getTransfersByUserId(int userId) {
-        return null;
+    public Transfer[] getTransfersByUserId(int userId) {
+        HttpEntity entity = createEntity();
+        return restTemplate.exchange(baseUrl + "transfers/" + userId, HttpMethod.GET, entity,
+                Transfer[].class).getBody();
     }
 
     @Override
@@ -87,9 +91,14 @@ public class TransferServiceREST implements TransferService{
         return null;
     }
 
+    private HttpEntity<Void> createEntity() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(currentUser.getToken());
+        return new HttpEntity<>(headers);
+    }
 
     @Override
-    public Transfer createTransfer(int id, int accountTo, int typeId, BigDecimal amount) {
+    public Transfer createTransfer(int transferId, int id, int accountTo, int typeId, BigDecimal amount) {
         Transfer newTransfer = new Transfer();
         Balance balance = new Balance();
         HttpHeaders headers = new HttpHeaders();
@@ -99,7 +108,7 @@ public class TransferServiceREST implements TransferService{
 
 
         // sets new transfer details
-        newTransfer.setId(1);
+        newTransfer.setId(transferId);
         newTransfer.setAccountFrom(id);
         newTransfer.setAccountTo(accountTo);
         newTransfer.setTransferTypeId(typeId);

@@ -2,6 +2,7 @@ package com.techelevator.tenmo.controller;
 
 import com.techelevator.tenmo.dao.AccountDao;
 import com.techelevator.tenmo.dao.TransferDao;
+import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Balance;
 import com.techelevator.tenmo.model.Transfer;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @PreAuthorize("isAuthenticated")
@@ -21,6 +24,8 @@ public class AccountController {
     private AccountDao accountDao;
     @Autowired
     private TransferDao transferDao;
+    @Autowired
+    private UserDao userDao;
 
 
     @PreAuthorize("permitAll")
@@ -52,6 +57,7 @@ public class AccountController {
         return accountDao.getAccountByUserId(id);
     }
 
+    @PreAuthorize("permitAll")
     @RequestMapping(path="/account/{id}", method = RequestMethod.GET)
     public Account getAccountByAccountId(@PathVariable int id) {
         return accountDao.getAccountByAccountId(id);
@@ -59,7 +65,25 @@ public class AccountController {
 
     @PreAuthorize("permitAll")
     @RequestMapping(path="/transfers/{id}", method = RequestMethod.GET)
-    public Transfer getTransfersByUserId(@PathVariable int id) {
-        return transferDao.getTransferByTransferId(id);
+    public List<Transfer> getTransfersByUserId(@PathVariable int id) {
+        return transferDao.getTransfersByUserId(id);
+    }
+
+    @PreAuthorize("permitAll")
+    @RequestMapping(path="/transfers", method = RequestMethod.GET)
+    public List<Transfer> getAllTransfers() {
+        return transferDao.getAllTransfers();
+    }
+
+    @PreAuthorize("permitAll")
+    @RequestMapping(path="/users", method = RequestMethod.GET)
+    public List<User> getUsers() {
+        return userDao.getUsers();
+    }
+
+    @PreAuthorize("permitAll")
+    @RequestMapping(path="/users/{id}", method = RequestMethod.GET)
+    public User getUserById(@PathVariable int id) {
+        return userDao.getUserById(id);
     }
 }

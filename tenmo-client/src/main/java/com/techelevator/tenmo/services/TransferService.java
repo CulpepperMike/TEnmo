@@ -6,12 +6,12 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface TransferService {
-    List<Transfer>getAllTransfers(Transfer transfer);
-    List<Transfer>getTransfersByUserId(int userId);
+    Transfer[] getAllTransfers();
+    Transfer[] getTransfersByUserId(int userId);
 
     Transfer getTransferFromId(int id);
 
-    Transfer createTransfer(int id, int accountTo, int typeId, BigDecimal amount);
+    Transfer createTransfer(int transferId, int id, int accountTo, int typeId, BigDecimal amount);
 
 
     //TransferStatus getTransferStatusById(int id);

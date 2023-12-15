@@ -4,6 +4,8 @@ import com.techelevator.tenmo.model.*;
 import com.techelevator.tenmo.services.*;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class App {
@@ -14,6 +16,9 @@ public class App {
     private AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
     private AuthenticatedUser currentUser;
     private AccountService accountService;
+    private TransferService transferService;
+    private UserService userService;
+    private static int transferId;
     public App(ConsoleService consoleService, AuthenticationService authenticationService) {
         this.consoleService = consoleService;
         this.authenticationService = authenticationService;
@@ -101,6 +106,7 @@ public class App {
 
 	private void viewTransferHistory() {
 		// TODO Auto-generated method stub
+        listTransfers();
 		
 	}
 
@@ -114,6 +120,7 @@ public class App {
         AccountServiceREST account = new AccountServiceREST(API_BASE_URL, currentUser);
         Scanner scanner = new Scanner(System.in);
         TransferServiceREST send = new TransferServiceREST(API_BASE_URL, currentUser);
+        listUsers();
         System.out.println("Enter ID of User you want to send Bucks to : ");
         int userTo = scanner.nextInt();
         System.out.println("Enter amount you want to send : ");
@@ -123,9 +130,10 @@ public class App {
         } else if (bucks.compareTo(BigDecimal.valueOf(0)) <= 0) {
             System.out.println("Transfer amount must be above 0.");
         } else {
+            transferIdMaker();
             int accountId = account.getAccountByUserId(currentUser.getUser().getId()).getId();
             int userToAccountId = account.getAccountByUserId(userTo).getId();
-            send.createTransfer(accountId, userToAccountId, 2, bucks);
+            send.createTransfer(transferId, accountId, userToAccountId, 2, bucks);
         }
 	}
 
@@ -133,5 +141,48 @@ public class App {
 		// TODO Auto-generated method stub
 		//note - type id for requestbucks is 1
 	}
+
+    private int transferIdMaker(){
+        TransferServiceREST transferServ = new TransferServiceREST(API_BASE_URL, currentUser);
+        Transfer[] transfers = transferServ.getAllTransfers();
+        int highestId = 0;
+        for (Transfer transfer : transfers){
+            if (transfer.getId() > highestId) {
+                highestId = transfer.getId();
+            }
+        }
+        transferId = highestId + 1;
+        return transferId;
+    }
+
+    private void listUsers(){
+        UserServiceREST userServ = new UserServiceREST(API_BASE_URL, currentUser);
+        User[] users = userServ.getUsers();
+        System.out.println("Users");
+        System.out.println("    Id    |    Name" );
+        System.out.println("---------------------");
+        for (User user : users){
+            System.out.println(user.getId() + "      |    " + user.getUsername());
+        }
+    }
+
+    private void listTransfers(){
+        UserServiceREST userServ = new UserServiceREST(API_BASE_URL, currentUser);
+        AccountServiceREST account = new AccountServiceREST(API_BASE_URL, currentUser);
+        TransferServiceREST transferServ = new TransferServiceREST(API_BASE_URL, currentUser);
+        Transfer[] transfers = transferServ.getTransfersByUserId(currentUser.getUser().getId());
+        // this is for grabbing the user
+        int accountFrom = 0;
+        int accountTo = 0;
+        System.out.println("Transfers");
+        System.out.println("    Id    |    Account From    |    Account To" );
+        System.out.println("------------------------------------------------");
+        for (Transfer transfer : transfers){
+            accountTo = account.getAccountById(transfer.getAccountTo()).getUserId();
+            accountFrom = account.getAccountById(transfer.getAccountFrom()).getUserId();
+            System.out.println("    " + transfer.getId() + "              " + accountFrom
+            + "              " + accountTo);
+        }
+    }
 
 }
