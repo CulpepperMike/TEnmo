@@ -106,6 +106,7 @@ public class App {
 
 	private void viewTransferHistory() {
 		// TODO Auto-generated method stub
+        listTransfers();
 		
 	}
 
@@ -162,6 +163,25 @@ public class App {
         System.out.println("---------------------");
         for (User user : users){
             System.out.println(user.getId() + "      |    " + user.getUsername());
+        }
+    }
+
+    private void listTransfers(){
+        UserServiceREST userServ = new UserServiceREST(API_BASE_URL, currentUser);
+        AccountServiceREST account = new AccountServiceREST(API_BASE_URL, currentUser);
+        TransferServiceREST transferServ = new TransferServiceREST(API_BASE_URL, currentUser);
+        Transfer[] transfers = transferServ.getTransfersByUserId(currentUser.getUser().getId());
+        // this is for grabbing the user
+        int accountFrom = 0;
+        int accountTo = 0;
+        System.out.println("Transfers");
+        System.out.println("    Id    |    Account From    |    Account To" );
+        System.out.println("------------------------------------------------");
+        for (Transfer transfer : transfers){
+            accountTo = account.getAccountById(transfer.getAccountTo()).getUserId();
+            accountFrom = account.getAccountById(transfer.getAccountFrom()).getUserId();
+            System.out.println("    " + transfer.getId() + "              " + accountFrom
+            + "              " + accountTo);
         }
     }
 

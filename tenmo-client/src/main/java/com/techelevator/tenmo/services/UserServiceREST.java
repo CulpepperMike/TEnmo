@@ -41,7 +41,7 @@ public class UserServiceREST implements UserService{
         User user = new User();
         HttpEntity entity = createEntity();
         try {
-            user = restTemplate.exchange(baseUrl + "user/" + id, HttpMethod.GET,
+            user = restTemplate.exchange(baseUrl + "users/" + id, HttpMethod.GET,
                     entity, User.class).getBody();
         } catch (RestClientResponseException e) {
             System.out.println(e.getMessage());
@@ -56,7 +56,7 @@ public class UserServiceREST implements UserService{
         User user = new User();
         HttpEntity entity = createEntity();
         try {
-            user = restTemplate.exchange(baseUrl + "user/" + username, HttpMethod.GET,
+            user = restTemplate.exchange(baseUrl + "users/" + username, HttpMethod.GET,
                     entity, User.class).getBody();
         } catch (RestClientResponseException e) {
             System.out.println(e.getMessage());

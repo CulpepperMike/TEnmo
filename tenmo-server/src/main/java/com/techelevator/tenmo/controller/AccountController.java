@@ -57,6 +57,7 @@ public class AccountController {
         return accountDao.getAccountByUserId(id);
     }
 
+    @PreAuthorize("permitAll")
     @RequestMapping(path="/account/{id}", method = RequestMethod.GET)
     public Account getAccountByAccountId(@PathVariable int id) {
         return accountDao.getAccountByAccountId(id);
@@ -64,8 +65,8 @@ public class AccountController {
 
     @PreAuthorize("permitAll")
     @RequestMapping(path="/transfers/{id}", method = RequestMethod.GET)
-    public Transfer getTransfersByUserId(@PathVariable int id) {
-        return transferDao.getTransferByTransferId(id);
+    public List<Transfer> getTransfersByUserId(@PathVariable int id) {
+        return transferDao.getTransfersByUserId(id);
     }
 
     @PreAuthorize("permitAll")
@@ -78,5 +79,11 @@ public class AccountController {
     @RequestMapping(path="/users", method = RequestMethod.GET)
     public List<User> getUsers() {
         return userDao.getUsers();
+    }
+
+    @PreAuthorize("permitAll")
+    @RequestMapping(path="/users/{id}", method = RequestMethod.GET)
+    public User getUserById(@PathVariable int id) {
+        return userDao.getUserById(id);
     }
 }

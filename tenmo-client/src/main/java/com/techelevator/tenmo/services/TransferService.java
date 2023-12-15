@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface TransferService {
     Transfer[] getAllTransfers();
-    List<Transfer>getTransfersByUserId(int userId);
+    Transfer[] getTransfersByUserId(int userId);
 
     Transfer getTransferFromId(int id);
 

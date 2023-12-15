@@ -80,8 +80,10 @@ public class TransferServiceREST implements TransferService{
     }
 
     @Override
-    public List<Transfer>getTransfersByUserId(int userId) {
-        return null;
+    public Transfer[] getTransfersByUserId(int userId) {
+        HttpEntity entity = createEntity();
+        return restTemplate.exchange(baseUrl + "transfers/" + userId, HttpMethod.GET, entity,
+                Transfer[].class).getBody();
     }
 
     @Override
