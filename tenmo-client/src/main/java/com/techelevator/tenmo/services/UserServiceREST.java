@@ -22,7 +22,7 @@ public class UserServiceREST implements UserService{
     }
 
     @Override
-    public List<User> getAllUsers(AuthenticatedUser authenticatedUser) {
+    public User[] getUsers() {
         User[] users = null;
         HttpEntity entity = createEntity();
         try {
@@ -33,8 +33,7 @@ public class UserServiceREST implements UserService{
         } catch (ResourceAccessException e) {
             System.out.println("Network Error, Please Try Again.");
         }
-        List<User> userList = List.of(users);
-        return userList;
+        return users;
     }
 
     @Override

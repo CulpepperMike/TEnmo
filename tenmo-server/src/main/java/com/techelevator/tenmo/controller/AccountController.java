@@ -2,6 +2,7 @@ package com.techelevator.tenmo.controller;
 
 import com.techelevator.tenmo.dao.AccountDao;
 import com.techelevator.tenmo.dao.TransferDao;
+import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Balance;
 import com.techelevator.tenmo.model.Transfer;
@@ -23,6 +24,8 @@ public class AccountController {
     private AccountDao accountDao;
     @Autowired
     private TransferDao transferDao;
+    @Autowired
+    private UserDao userDao;
 
 
     @PreAuthorize("permitAll")
@@ -69,5 +72,11 @@ public class AccountController {
     @RequestMapping(path="/transfers", method = RequestMethod.GET)
     public List<Transfer> getAllTransfers() {
         return transferDao.getAllTransfers();
+    }
+
+    @PreAuthorize("permitAll")
+    @RequestMapping(path="/users", method = RequestMethod.GET)
+    public List<User> getUsers() {
+        return userDao.getUsers();
     }
 }

@@ -4,6 +4,7 @@ import com.techelevator.tenmo.model.*;
 import com.techelevator.tenmo.services.*;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -16,6 +17,7 @@ public class App {
     private AuthenticatedUser currentUser;
     private AccountService accountService;
     private TransferService transferService;
+    private UserService userService;
     private static int transferId;
     public App(ConsoleService consoleService, AuthenticationService authenticationService) {
         this.consoleService = consoleService;
@@ -117,6 +119,7 @@ public class App {
         AccountServiceREST account = new AccountServiceREST(API_BASE_URL, currentUser);
         Scanner scanner = new Scanner(System.in);
         TransferServiceREST send = new TransferServiceREST(API_BASE_URL, currentUser);
+        listUsers();
         System.out.println("Enter ID of User you want to send Bucks to : ");
         int userTo = scanner.nextInt();
         System.out.println("Enter amount you want to send : ");
@@ -149,6 +152,17 @@ public class App {
         }
         transferId = highestId + 1;
         return transferId;
+    }
+
+    private void listUsers(){
+        UserServiceREST userServ = new UserServiceREST(API_BASE_URL, currentUser);
+        User[] users = userServ.getUsers();
+        System.out.println("Users");
+        System.out.println("    Id    |    Name" );
+        System.out.println("---------------------");
+        for (User user : users){
+            System.out.println(user.getId() + "      |    " + user.getUsername());
+        }
     }
 
 }
