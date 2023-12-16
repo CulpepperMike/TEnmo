@@ -2,16 +2,20 @@ package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.model.TransferStatus;
 import com.techelevator.tenmo.model.TransferType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 
+@Component
 public class JdbcTransferStatusDao implements TransferStatusDao{
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
-    public JdbcTransferStatusDao(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    @Autowired
+    public JdbcTransferStatusDao(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
     @Override
     public TransferStatus getTransferStatusByDescription(String description) {
@@ -19,12 +23,8 @@ public class JdbcTransferStatusDao implements TransferStatusDao{
 
         SqlRowSet result = jdbcTemplate.queryForRowSet(sql, description);
         TransferStatus transferStatus = null;
-
         if(result.next()) {
-            int id = result.getInt("transfer_type_id");
-            String desc = result.getString("transfer_type_desc");
-
-            transferStatus = new TransferStatus(id, desc);
+            transferStatus = mapResultsToTransferStatus(result);
         }
         return transferStatus;
     }
@@ -35,13 +35,17 @@ public class JdbcTransferStatusDao implements TransferStatusDao{
         SqlRowSet result = jdbcTemplate.queryForRowSet(sql, id);
         TransferStatus transferStatus = null;
         if(result.next()) {
-            int transferStatusId = result.getInt("transfer_status_id");
-            String desc = result.getString(("transfer_status_desc"));
-            transferStatus = new TransferStatus(transferStatusId, desc);
-
+            transferStatus = mapResultsToTransferStatus(result);
         }
-
         return transferStatus;
     }
 
+    private TransferStatus mapResultsToTransferStatus(SqlRowSet result) {
+        int id = result.getInt("transfer_status_id");
+        String description = result.getString("transfer_status_desc");
+
+        return new TransferStatus(id, description);
+    }
+
 }
+

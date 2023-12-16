@@ -1,18 +1,22 @@
 package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.model.TransferType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 
+@Component
 public class JdbcTransferTypeDao implements TransferTypeDao{
 
 
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
-    public JdbcTransferTypeDao(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    @Autowired
+    public JdbcTransferTypeDao(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
     @Override
     public TransferType getTransferTypeById(int id) {
@@ -21,11 +25,7 @@ public class JdbcTransferTypeDao implements TransferTypeDao{
 
         TransferType transferType = null;
         if(result.next()) {
-
-            int typeId = result.getInt("transfer_type_id");
-            String desc = result.getString("transfer_type_desc");
-
-            transferType = new TransferType(typeId, desc);
+            transferType = mapResultsToTransferType(result);
         }
 
 
@@ -40,12 +40,16 @@ public class JdbcTransferTypeDao implements TransferTypeDao{
         TransferType transferType = null;
 
         if(result.next()) {
-            int id = result.getInt("transfer_type_id");
-            String desc = result.getString("transfer_type_desc");
-
-            transferType = new TransferType(id, desc);
+            transferType = mapResultsToTransferType(result);
         }
         return transferType;
 
+    }
+
+    private TransferType mapResultsToTransferType(SqlRowSet result) {
+        int id = result.getInt("transfer_type_id");
+        String description = result.getString("transfer_type_desc");
+
+        return new TransferType(id, description);
     }
 }

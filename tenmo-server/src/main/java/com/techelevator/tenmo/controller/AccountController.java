@@ -1,12 +1,7 @@
 package com.techelevator.tenmo.controller;
 
-import com.techelevator.tenmo.dao.AccountDao;
-import com.techelevator.tenmo.dao.TransferDao;
-import com.techelevator.tenmo.dao.UserDao;
-import com.techelevator.tenmo.model.Account;
-import com.techelevator.tenmo.model.Balance;
-import com.techelevator.tenmo.model.Transfer;
-import com.techelevator.tenmo.model.User;
+import com.techelevator.tenmo.dao.*;
+import com.techelevator.tenmo.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,6 +21,12 @@ public class AccountController {
     private TransferDao transferDao;
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private TransferTypeDao transferTypeDao;
+    @Autowired
+    private TransferStatusDao transferStatusDao;
+
 
 
     @PreAuthorize("permitAll")
@@ -86,4 +87,17 @@ public class AccountController {
     public User getUserById(@PathVariable int id) {
         return userDao.getUserById(id);
     }
+
+    @PreAuthorize("permitAll")
+    @RequestMapping(path="/transfertype/{id}", method = RequestMethod.GET)
+    public TransferType getTransferTypeById(@PathVariable int id) {
+        return transferTypeDao.getTransferTypeById(id);
+    }
+
+    @PreAuthorize("permitAll")
+    @RequestMapping(path="/transferstatus/{id}", method = RequestMethod.GET)
+    public TransferStatus getTransferStatusById(@PathVariable int id) {
+        return transferStatusDao.getTransferStatusById(id);
+    }
+
 }

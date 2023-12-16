@@ -5,7 +5,8 @@ public class TransferType {
     private String description;
 
     public TransferType(int id, String description) {
-
+        this.id = id;
+        this.description = description;
     }
 
     public int getId() {
