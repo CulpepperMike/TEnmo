@@ -223,7 +223,7 @@ public class App {
                     System.out.println("Amount: $" + transfer.getAmount());
                     break;
                 }
-            } if (found == false) {
+            } if (!found) {
                 System.out.println("Transfer not found");
             }
         }   consoleService.pause();
