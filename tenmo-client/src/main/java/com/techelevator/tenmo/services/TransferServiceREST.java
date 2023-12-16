@@ -1,7 +1,10 @@
 package com.techelevator.tenmo.services;
 
 import com.techelevator.tenmo.model.*;
+import com.techelevator.util.BasicLogger;
 import org.springframework.http.*;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
@@ -75,23 +78,40 @@ public class TransferServiceREST implements TransferService{
     @Override
     public Transfer[] getAllTransfers() {
         HttpEntity entity = createEntity();
-        return restTemplate.exchange(baseUrl + "transfers", HttpMethod.GET, entity,
-                Transfer[].class).getBody();
+        Transfer[] transfers = null;
+        try {
+            transfers = restTemplate.exchange(baseUrl + "transfers", HttpMethod.GET, entity,
+                    Transfer[].class).getBody();
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return transfers;
     }
 
     @Override
     public Transfer[] getTransfersByUserId(int userId) {
         HttpEntity entity = createEntity();
-        return restTemplate.exchange(baseUrl + "transfers/" + userId, HttpMethod.GET, entity,
-                Transfer[].class).getBody();
+        Transfer[] transfers = null;
+        try {
+            transfers = restTemplate.exchange(baseUrl + "transfers/" + userId, HttpMethod.GET, entity,
+                    Transfer[].class).getBody();
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return transfers;
     }
 
     @Override
     public Transfer getTransferFromId(int id) {
-
         HttpEntity entity = createEntity();
-        return restTemplate.exchange(baseUrl + "transfers/" + id, HttpMethod.GET, entity,
-                Transfer.class).getBody();
+        Transfer transfer = new Transfer();
+        try {
+            transfer = restTemplate.exchange(baseUrl + "transfers/" + id, HttpMethod.GET, entity,
+                    Transfer.class).getBody();
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return transfer;
     }
 
     private HttpEntity<Void> createEntity() {
@@ -127,7 +147,13 @@ public class TransferServiceREST implements TransferService{
 
         System.out.println("Your new balance is: $" + updatedBalance.toString() + "!");
         HttpEntity<Transfer> transferHttpEntity = new HttpEntity<>(newTransfer, headers);
-        return restTemplate.exchange(baseUrl + "/transfers/" + newTransfer.getId(), HttpMethod.POST, transferHttpEntity, Transfer.class).getBody();
+        Transfer createdTransfer = new Transfer();
+        try {
+            createdTransfer = restTemplate.exchange(baseUrl + "/transfers/" + newTransfer.getId(), HttpMethod.POST, transferHttpEntity, Transfer.class).getBody();
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return createdTransfer;
     }
 
 

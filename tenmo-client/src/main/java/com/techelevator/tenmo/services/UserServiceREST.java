@@ -2,6 +2,7 @@ package com.techelevator.tenmo.services;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
 import com.techelevator.tenmo.model.User;
+import com.techelevator.util.BasicLogger;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -28,10 +29,8 @@ public class UserServiceREST implements UserService{
         try {
             users = restTemplate.exchange(baseUrl + "users/", HttpMethod.GET,
                     entity, User[].class).getBody();
-        } catch (RestClientResponseException e) {
-            System.out.println(e.getMessage());
-        } catch (ResourceAccessException e) {
-            System.out.println("Network Error, Please Try Again.");
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
         }
         return users;
     }
@@ -43,10 +42,8 @@ public class UserServiceREST implements UserService{
         try {
             user = restTemplate.exchange(baseUrl + "users/" + id, HttpMethod.GET,
                     entity, User.class).getBody();
-        } catch (RestClientResponseException e) {
-            System.out.println(e.getMessage());
-        } catch (ResourceAccessException e) {
-            System.out.println("Network Error, Please Try Again.");
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
         }
         return user;
     }
@@ -58,10 +55,8 @@ public class UserServiceREST implements UserService{
         try {
             user = restTemplate.exchange(baseUrl + "users/" + username, HttpMethod.GET,
                     entity, User.class).getBody();
-        } catch (RestClientResponseException e) {
-            System.out.println(e.getMessage());
-        } catch (ResourceAccessException e) {
-            System.out.println("Network Error, Please Try Again.");
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
         }
         return user;
     }

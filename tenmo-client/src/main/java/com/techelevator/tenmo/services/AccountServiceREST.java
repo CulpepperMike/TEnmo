@@ -44,16 +44,28 @@ public class AccountServiceREST implements AccountService {
     @Override
     public Account getAccountByUserId(int userId) {
         HttpEntity entity = createEntity();
-            return restTemplate.exchange(baseUrl + "account/user/" + userId,
+        Account account = new Account();
+        try {
+            account = restTemplate.exchange(baseUrl + "account/user/" + userId,
                     HttpMethod.GET,
                     entity,
                     Account.class).getBody();
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return account;
     }
 
     @Override
     public Account getAccountById(int id) {
         HttpEntity entity = createEntity();
-        return restTemplate.exchange(baseUrl + "account/" + id, HttpMethod.GET, entity,
-                Account.class).getBody();
+        Account account = new Account();
+        try {
+            account = restTemplate.exchange(baseUrl + "account/" + id, HttpMethod.GET, entity,
+                    Account.class).getBody();
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return account;
     }
 }

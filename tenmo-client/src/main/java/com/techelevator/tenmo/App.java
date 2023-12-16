@@ -15,7 +15,7 @@ public class App {
     private ConsoleService consoleService = new ConsoleService();
     private AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
     private AuthenticatedUser currentUser;
-    private boolean isTransferMenu = true;
+    private boolean isTransferMenu;
     private static int transferId;
     public App(ConsoleService consoleService, AuthenticationService authenticationService) {
         this.consoleService = consoleService;
@@ -79,7 +79,8 @@ public class App {
             if (menuSelection == 1) {
                 viewCurrentBalance();
             } else if (menuSelection == 2) {
-                while (isTransferMenu == true){
+                isTransferMenu = true;
+                while (isTransferMenu){
                     viewTransferHistory();
                 }
             } else if (menuSelection == 3) {
@@ -218,7 +219,7 @@ public class App {
                     System.out.println("Amount: $" + transfer.getAmount());
                     break;
                 }
-            } if (found == false) {
+            } if (!found) {
                 System.out.println("Transfer not found");
             }
         }   consoleService.pause();

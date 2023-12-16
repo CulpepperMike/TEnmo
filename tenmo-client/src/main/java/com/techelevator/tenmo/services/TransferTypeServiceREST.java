@@ -1,9 +1,13 @@
 package com.techelevator.tenmo.services;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.TransferType;
+import com.techelevator.util.BasicLogger;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 public class TransferTypeServiceREST implements TransferTypeService {
@@ -18,9 +22,15 @@ public class TransferTypeServiceREST implements TransferTypeService {
     }
 
     @Override
-    public com.techelevator.tenmo.model.TransferType getTransferTypeById(int id) {
+    public TransferType getTransferTypeById(int id) {
         HttpEntity entity = createEntity();
-        return restTemplate.exchange(baseUrl + "transfertype/" + id, HttpMethod.GET, entity, com.techelevator.tenmo.model.TransferType.class).getBody();
+        TransferType transferType = new TransferType();
+        try {
+            transferType = restTemplate.exchange(baseUrl + "transfertype/" + id, HttpMethod.GET, entity, TransferType.class).getBody();
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return transferType;
     }
 
     private HttpEntity<Void> createEntity() {
@@ -30,10 +40,15 @@ public class TransferTypeServiceREST implements TransferTypeService {
     }
 
     @Override
-    public com.techelevator.tenmo.model.TransferType getTransferTypeFromDesc(String description) {
+    public TransferType getTransferTypeFromDesc(String description) {
         HttpEntity entity = createEntity();
-        com.techelevator.tenmo.model.TransferType transferType = restTemplate.exchange(baseUrl + "transfertype/", HttpMethod.GET,
-                entity, com.techelevator.tenmo.model.TransferType.class).getBody();
-        return null;
+        TransferType transferType = new TransferType();
+        try {
+            transferType = restTemplate.exchange(baseUrl + "transfertype/" + description, HttpMethod.GET,
+                    entity, TransferType.class).getBody();
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return transferType;
     }
 }
