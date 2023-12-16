@@ -18,6 +18,7 @@ public class App {
     private AccountService accountService;
     private TransferService transferService;
     private UserService userService;
+    private boolean isTransferMenu = true;
     private static int transferId;
     public App(ConsoleService consoleService, AuthenticationService authenticationService) {
         this.consoleService = consoleService;
@@ -81,7 +82,9 @@ public class App {
             if (menuSelection == 1) {
                 viewCurrentBalance();
             } else if (menuSelection == 2) {
-                viewTransferHistory();
+                while (isTransferMenu == true){
+                    viewTransferHistory();
+                }
             } else if (menuSelection == 3) {
                 viewPendingRequests();
             } else if (menuSelection == 4) {
@@ -106,8 +109,11 @@ public class App {
 
 	private void viewTransferHistory() {
 		// TODO Auto-generated method stub
+        Scanner scanner = new Scanner(System.in);
         listTransfers();
-		
+        System.out.println("Please enter transfer ID to view details (0 to cancel):");
+        int transferId = scanner.nextInt();
+        transferDetails(transferId);
 	}
 
 	private void viewPendingRequests() {
@@ -159,7 +165,8 @@ public class App {
         UserServiceREST userServ = new UserServiceREST(API_BASE_URL, currentUser);
         User[] users = userServ.getUsers();
         System.out.println("Users");
-        System.out.println("    Id    |    Name" );
+        System.out.println("---------------------");
+        System.out.println("    Id    |    Name    " );
         System.out.println("---------------------");
         for (User user : users){
             System.out.println(user.getId() + "      |    " + user.getUsername());
@@ -175,14 +182,43 @@ public class App {
         int accountFrom = 0;
         int accountTo = 0;
         System.out.println("Transfers");
-        System.out.println("    Id    |    Account From    |    Account To" );
-        System.out.println("------------------------------------------------");
+        System.out.println("---------------------------------------------------------------");
+        System.out.println("    Id    |    Account From    |    Account To    |    Amount    " );
+        System.out.println("---------------------------------------------------------------");
         for (Transfer transfer : transfers){
             accountTo = account.getAccountById(transfer.getAccountTo()).getUserId();
             accountFrom = account.getAccountById(transfer.getAccountFrom()).getUserId();
             System.out.println("    " + transfer.getId() + "              " + accountFrom
-            + "              " + accountTo);
+            + "              " + accountTo + "              $" + transfer.getAmount() );
         }
+    }
+
+    private void transferDetails(int transferId){
+        TransferServiceREST transferServ = new TransferServiceREST(API_BASE_URL, currentUser);
+        Transfer[] transfers = transferServ.getTransfersByUserId(currentUser.getUser().getId());
+        boolean found = false;
+        if(transferId == 0){
+            isTransferMenu = false;
+            return;
+        } else {
+            for (Transfer transfer : transfers){
+                if (transfer.getId() == transferId){
+                    found = true;
+                    System.out.println("-------------------------------------");
+                    System.out.println("        Transfer Details");
+                    System.out.println("-------------------------------------");
+                    System.out.println("Id : " + transfer.getId());
+                    System.out.println("From: " + transfer.getAccountFrom());
+                    System.out.println("To: " + transfer.getAccountTo());
+                    System.out.println("Type: " + transfer.getTransferTypeId());
+                    System.out.println("Status: " + transfer.getTransferStatusId());
+                    System.out.println("Amount: $" + transfer.getAmount());
+                    break;
+                }
+            } if (found == false) {
+                System.out.println("Transfer not found");
+            }
+        }   consoleService.pause();
     }
 
 }
