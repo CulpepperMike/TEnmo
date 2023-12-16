@@ -15,9 +15,6 @@ public class App {
     private ConsoleService consoleService = new ConsoleService();
     private AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
     private AuthenticatedUser currentUser;
-    private AccountService accountService;
-    private TransferService transferService;
-    private UserService userService;
     private boolean isTransferMenu = true;
     private static int transferId;
     public App(ConsoleService consoleService, AuthenticationService authenticationService) {
@@ -188,13 +185,17 @@ public class App {
         for (Transfer transfer : transfers){
             accountTo = account.getAccountById(transfer.getAccountTo()).getUserId();
             accountFrom = account.getAccountById(transfer.getAccountFrom()).getUserId();
-            System.out.println("    " + transfer.getId() + "              " + accountFrom
-            + "              " + accountTo + "              $" + transfer.getAmount() );
+            User accountToUser = userServ.getUserById(accountTo);
+            User accountFromUser = userServ.getUserById(accountFrom);
+            System.out.println("    " + transfer.getId() + "              " + accountFromUser.getUsername()
+            + "              " + accountToUser.getUsername() + "              $" + transfer.getAmount() );
         }
     }
 
     private void transferDetails(int transferId){
         TransferServiceREST transferServ = new TransferServiceREST(API_BASE_URL, currentUser);
+        AccountServiceREST accountServ = new AccountServiceREST(API_BASE_URL, currentUser);
+        UserServiceREST userServ = new UserServiceREST(API_BASE_URL, currentUser);
         Transfer[] transfers = transferServ.getTransfersByUserId(currentUser.getUser().getId());
         boolean found = false;
         if(transferId == 0){
@@ -204,12 +205,14 @@ public class App {
             for (Transfer transfer : transfers){
                 if (transfer.getId() == transferId){
                     found = true;
+                    User fromUser = userServ.getUserById(accountServ.getAccountById(transfer.getAccountFrom()).getUserId());
+                    User toUser = userServ.getUserById(accountServ.getAccountById(transfer.getAccountTo()).getUserId());
                     System.out.println("-------------------------------------");
                     System.out.println("        Transfer Details");
                     System.out.println("-------------------------------------");
                     System.out.println("Id : " + transfer.getId());
-                    System.out.println("From: " + transfer.getAccountFrom());
-                    System.out.println("To: " + transfer.getAccountTo());
+                    System.out.println("From: " + fromUser.getUsername());
+                    System.out.println("To: " + toUser.getUsername());
                     System.out.println("Type: " + transfer.getTransferTypeId());
                     System.out.println("Status: " + transfer.getTransferStatusId());
                     System.out.println("Amount: $" + transfer.getAmount());
